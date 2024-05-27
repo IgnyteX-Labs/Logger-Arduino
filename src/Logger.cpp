@@ -10,8 +10,10 @@ std::function<void(char *current_timestamp_buffer)> Logger::_get_timestamp;
 
 void Logger::create_file_in_folder(const char *folder_path, const char *file_path)
 {
-    /// TODO: Implement SD Card logging... for now
-    return;
+    if(!_SD) {
+        return; // If no SD-Card was specified skip sd functionality and only print to Serial
+    }
+
     // Check if the file alread exists if not create it
     if (!_SD->exists(folder_path))
     {
@@ -66,10 +68,11 @@ void Logger::log_and_printf(const char *format, ...)
 
     va_list args;
     va_start(args, format);
-    vsnprintf(log_message_buffer + 19, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - 19, format, args); // Overwrite the null terminator...
+    vsnprintf(log_message_buffer + 19, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - 20, format, args); // Overwrite the null terminator...
     va_end(args);
 
-    Serial.println(log_message_buffer);
+    strncat(log_message_buffer, "\n", 1);
+    Serial.write(log_message_buffer, strnlen(log_message_buffer, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE));
     write_to_file(log_message_buffer);
 }
 
@@ -77,16 +80,19 @@ void Logger::log_and_print(const char *message)
 {
     get_current_timestamp();
     strlcpy(log_message_buffer, current_timestamp_buffer, 20);
-    strncat(log_message_buffer, message, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE);
+    strncat(log_message_buffer, message, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE-1); //-1 to keep space for the newline character
+    strncat(log_message_buffer, "\n", 1);
 
-    Serial.println(log_message_buffer);
+    Serial.write(log_message_buffer, strnlen(log_message_buffer, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE));
     write_to_file(log_message_buffer);
 }
 
 void Logger::write_to_file(const char *message)
 {
-    /// TODO: Implement SD Card logging... for now
-    return;
+    if(!_SD) {
+        return; // If no SD-Card was specified skip sd functionality and only print to Serial
+    }
+
     if (!_file.open(log_path, O_WRITE | O_AT_END))
     {
         Serial.println("[SD-Card] Failed to write log message to SD");
