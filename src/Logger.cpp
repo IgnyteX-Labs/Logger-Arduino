@@ -65,10 +65,11 @@ void Logger::log_and_printf(const char *format, ...)
 {
     get_current_timestamp();
     strlcpy(log_message_buffer, current_timestamp_buffer, 20); // Null terminator at index 19
+    int timestamp_length = strnlen(log_message_buffer, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE);
 
     va_list args;
     va_start(args, format);
-    vsnprintf(log_message_buffer + 19, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - 20, format, args); // Overwrite the null terminator...
+    vsnprintf(log_message_buffer+timestamp_length, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - (timestamp_length+1), format, args); // Overwrite the null terminator...
     va_end(args);
 
     strncat(log_message_buffer, "\n", 1);
