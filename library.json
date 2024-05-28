@@ -13,6 +13,6 @@
 	"frameworks": "Arduino",
 	"dependencies": {
 		"greiman/SdFat": "^2.2.3",
-		"bblanchon/ArduinoJson":"7.0.4"
+		"bblanchon/ArduinoJson": "7.0.4"
 	}
 }
