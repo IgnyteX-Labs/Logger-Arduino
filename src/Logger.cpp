@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include <ArduinoJson.h>
 
 char* Logger::log_message_buffer;
 char *Logger::current_timestamp_buffer;
