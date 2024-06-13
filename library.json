@@ -1,6 +1,6 @@
 {
 	"name": "Logger",
-	"version": "0.0.3",
+	"version": "1.0.0",
 	"description": "A simple/easy to use (static) Logger class for Arduino Projects. Supports (printf style) formatted messages. Outputs on SdCard and Serial Monitor.",
 	"repository": {
 		"type": "git",
@@ -12,6 +12,5 @@
 	"license": "MIT",
 	"frameworks": "Arduino",
 	"dependencies": {
-		"greiman/SdFat": "^2.2.3"
 	}
 }

@@ -1,38 +1,37 @@
 #include "Logger.h"
 
-char* Logger::log_message_buffer;
+char *Logger::log_message_buffer;
 char *Logger::current_timestamp_buffer;
-const char* Logger::log_path = "/logs/log.log";
-SdFile Logger::_file;
-SdFat *Logger::_SD;
+const char *Logger::log_path = "/logs/log.log";
+fs::FS *Logger::_fs;
 std::function<void(char *current_timestamp_buffer)> Logger::_get_timestamp;
 
 void Logger::create_file_in_folder(const char *folder_path, const char *file_path)
 {
-    if(!_SD) {
-        return; // If no SD-Card was specified skip sd functionality and only print to Serial
+    if (!_fs)
+    {
+        return; // If no Filesystem was specified skip fs functionality and only print to Serial
     }
 
     // Check if the file alread exists if not create it
-    if (!_SD->exists(folder_path))
+    if (!_fs->exists(folder_path))
     {
         // The log dir does not yet exist
-        if (!_SD->mkdir(folder_path))
+        if (!_fs->mkdir(folder_path))
         {
-            Serial.println("[SD-Card] Failed to create dir");
+            Serial.println("[Filesystem] Failed to create dir");
             return;
         }
     }
     // Create logfile if it doesnt exist
-    if (!_SD->exists(file_path))
+    File file = _fs->open(file_path, FILE_WRITE);
+
+    if (!file)
     {
-        if (!_file.open(file_path, O_WRONLY | O_CREAT))
-        {
-            Serial.println("[SD-Card] Failed to create file");
-            return;
-        }
-        _file.close();
+        Serial.println("[Filesystem] Failed to create file");
+        return;
     }
+    file.close();
 }
 
 void Logger::get_current_timestamp()
@@ -43,9 +42,9 @@ void Logger::get_current_timestamp()
 unsigned long Logger::previous_millis;
 unsigned long Logger::delay;
 
-void Logger::begin(SdFat *SD, std::function<void(char *current_timestamp_buffer)> get_timestamp)
+void Logger::begin(fs::FS *filesystem, std::function<void(char *current_timestamp_buffer)> get_timestamp)
 {
-    _SD = SD;
+    _fs = filesystem;
     _get_timestamp = get_timestamp;
     log_message_buffer = new char[TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE]();
     current_timestamp_buffer = new char[20]();
@@ -68,7 +67,7 @@ void Logger::log_and_printf(const char *format, ...)
 
     va_list args;
     va_start(args, format);
-    vsnprintf(log_message_buffer+timestamp_length, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - (timestamp_length+1), format, args); // Overwrite the null terminator...
+    vsnprintf(log_message_buffer + timestamp_length, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - (timestamp_length + 1), format, args); // Overwrite the null terminator...
     va_end(args);
 
     strncat(log_message_buffer, "\n", 1);
@@ -80,7 +79,7 @@ void Logger::log_and_print(const char *message)
 {
     get_current_timestamp();
     strlcpy(log_message_buffer, current_timestamp_buffer, 20);
-    strncat(log_message_buffer, message, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE-1); //-1 to keep space for the newline character
+    strncat(log_message_buffer, message, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE - 1); //-1 to keep space for the newline character
     strncat(log_message_buffer, "\n", 1);
 
     Serial.write(log_message_buffer, strnlen(log_message_buffer, TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE));
@@ -89,16 +88,19 @@ void Logger::log_and_print(const char *message)
 
 void Logger::write_to_file(const char *message)
 {
-    if(!_SD) {
-        return; // If no SD-Card was specified skip sd functionality and only print to Serial
+    if (!_fs)
+    {
+        return; // If no Filesystem was specified skip fs functionality and only print to Serial
     }
 
-    if (!_file.open(log_path, O_WRITE | O_AT_END))
+    File file = _fs->open(log_path, FILE_APPEND);
+
+    if (!file)
     {
-        Serial.println("[SD-Card] Failed to write log message to SD");
+        Serial.println("[Filesystem] Failed to write log message to File");
         return;
     }
 
-    _file.println(log_message_buffer);
-    _file.close();
+    file.println(log_message_buffer);
+    file.close();
 }
