@@ -14,3 +14,4 @@ jobs:
   determine_version_and_release:
     uses: IgnyteX-Labs/.github/.github/workflows/platformiolibrary_version_and_release.yml@main
     secrets: inherit
+    permissions: write-all
