@@ -4,7 +4,7 @@
   "description": "A simple/easy to use (static) Logger class for Arduino Projects. Supports (printf style) formatted messages. Outputs on SdCard and Serial Monitor.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/toqix/Logger.git"
+    "url": "https://github.com/IgnyteX-Labs/Logger-Arduino.git"
   },
   "authors": {
     "name": "Veit Auckenthaler"
