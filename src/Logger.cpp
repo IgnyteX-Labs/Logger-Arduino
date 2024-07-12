@@ -1,4 +1,6 @@
 #include "Logger.h"
+#include <HardwareSerial.h>
+#include <WString.h>
 
 char *Logger::log_message_buffer;
 char *Logger::current_timestamp_buffer;
@@ -91,6 +93,6 @@ void Logger::write_to_file(const char *message)
         return;
     }
 
-    file.println(log_message_buffer);
-    file.close();
+    fs_handler->println(log_message_buffer);
+    fs_handler->close();
 }
