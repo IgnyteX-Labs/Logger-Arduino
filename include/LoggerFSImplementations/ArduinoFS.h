@@ -4,7 +4,7 @@
 #if (__has_include(<FS.h>))
 
 #include <FS.h>
-#include "FSImplementations/LoggerFSHandler.h"
+#include "LoggerFSImplementations/LoggerFSHandler.h"
 
 class ArduinoFS_LoggerFSHandlerImplementation : public LoggerFSHandler
 {

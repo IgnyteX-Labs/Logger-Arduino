@@ -4,9 +4,7 @@
 #include <stdarg.h>
 #include <functional>
 
-#include "FSImplementations/LoggerFSHandler.h"
-#include "FSImplementations/ArduinoFS_LoggerFSHandlerImplementation.h"
-#include "FSImplementations/SdFat_LoggerFSHandlerImplementation.h"
+#include "LoggerFSImplementations/LoggerFSHandler.h"
 
 #define TOQIX_LOGGER_LOG_MESSAGE_BUFFER_SIZE 256
 

@@ -4,7 +4,7 @@
 #if (__has_include(<SdFat.h>))
 
 #include <SdFat.h>
-#include "FSImplementations/LoggerFSHandler.h"
+#include "LoggerFSImplementations/LoggerFSHandler.h"
 
 class SdFat_LoggerFSHandlerImplementation : public LoggerFSHandler
 {
