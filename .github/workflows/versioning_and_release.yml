@@ -2,6 +2,11 @@ name: Determine Version and Release
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
   push:
     branches: [main]
     paths-ignore:
